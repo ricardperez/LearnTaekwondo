@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>key_name</key>
+		<string>sogui_kisul</string>
+	</dict>
+	<dict>
+		<key>key_name</key>
+		<string>maki</string>
+	</dict>
+	<dict>
+		<key>key_name</key>
+		<string>gong_kiok</string>
+	</dict>
+	<dict>
+		<key>key_name</key>
+		<string>pum</string>
+	</dict>
+	<dict>
+		<key>key_name</key>
+		<string>bal_kisul</string>
+	</dict>
+	<dict>
+		<key>key_name</key>
+		<string>tuio</string>
+	</dict>
+</array>
+</plist>

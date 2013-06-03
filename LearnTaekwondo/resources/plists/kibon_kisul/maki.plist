@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>1Dan</key>
+	<array>
+		<string>are_maki</string>
+		<string>momtong_an_maki</string>
+		<string>momtong_maki</string>
+		<string>olgul_maki</string>
+		<string>jansonnal_momtong_bakat_maki</string>
+		<string>sonnal_momtong_maki</string>
+		<string>momtong_bakat_maki</string>
+		<string>olgul_bakat_maki</string>
+		<string>gechio_are_maki</string>
+		<string>batagson_momtong_maki</string>
+		<string>batagson_momtong_an_maki</string>
+		<string>sonnal_are_maki</string>
+		<string>gechio_momtong_maki</string>
+		<string>goduro_batagson_momtong_an_maki</string>
+		<string>okgoro_are_maki</string>
+		<string>jansonnal_momtong_yop_maki</string>
+		<string>goduro_momtong_maki</string>
+		<string>goduro_are_maki</string>
+	</array>
+	<key>2Dan</key>
+	<array/>
+	<key>3Dan</key>
+	<array/>
+	<key>4Dan</key>
+	<array/>
+	<key>5Dan</key>
+	<array/>
+</dict>
+</plist>

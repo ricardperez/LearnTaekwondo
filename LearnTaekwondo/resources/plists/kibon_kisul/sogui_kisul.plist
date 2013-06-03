@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>1Dan</key>
+	<array>
+		<string>charyot_sogui</string>
+		<string>pionji_sogui</string>
+		<string>moa_sogui</string>
+		<string>ap_sogui</string>
+		<string>ap_kubi_sogui</string>
+		<string>chuchum_sogui</string>
+		<string>bom_sogui</string>
+		<string>tuit_kubi_sogui</string>
+		<string>tuit_koa_sogui</string>
+		<string>naranji_sogui</string>
+		<string>uen_sogui</string>
+		<string>orun_sogui</string>
+	</array>
+	<key>2Dan</key>
+	<array/>
+	<key>3Dan</key>
+	<array/>
+	<key>4Dan</key>
+	<array/>
+	<key>5Dan</key>
+	<array/>
+</dict>
+</plist>
