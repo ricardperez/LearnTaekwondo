@@ -40,7 +40,8 @@
 		NSMutableArray *itemViews = [NSMutableArray arrayWithCapacity:nItems];
 		
 		CGFloat itemsSize = MIN(height, ((width / nItems)*0.9f));
-		CGFloat separation = ((self.frame.size.width - nItems * itemsSize) / (nItems+1));
+//		CGFloat separation = ((self.frame.size.width - nItems * itemsSize) / (nItems+1));
+		CGFloat separation = ((width - nItems * itemsSize) / (nItems+1));
 		CGRect frame = CGRectMake(separation, 0.0f, itemsSize, itemsSize);
 		for (NSInteger i=0; i<nItems; ++i)
 		{

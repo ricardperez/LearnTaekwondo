@@ -125,6 +125,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self.nodePickerView layoutNodeViews];
+}
+
 - (void)loadNodesForSubjects:(NSArray *)subjects dan:(NSInteger)dan nTests:(NSInteger)maxNTests
 {
 	NSInteger remaining = 0;
@@ -357,6 +363,13 @@
 {
 	_testIndex = testIndex;
 	[self.navigationItem setTitle:[NSString stringWithFormat:@"%i / %i", (testIndex+1), [self.nodes count]]];
+}
+
+#pragma mark - Rotations
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+	[self.nodePickerView layoutNodeViews];
 }
 
 @end

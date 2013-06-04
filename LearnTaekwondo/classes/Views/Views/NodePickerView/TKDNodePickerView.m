@@ -64,6 +64,12 @@
 	[self.panNodeView setHidden:YES];
 }
 
+- (void)setFrame:(CGRect)frame
+{
+	[super setFrame:frame];
+	[self.scrollView setContentSize:CGSizeMake(self.scrollView.contentSize.width, self.scrollView.frame.size.height-1.0f)];
+}
+
 
 - (NSArray *)createNodeViews:(NSInteger)nViews
 {
@@ -111,6 +117,46 @@
 	
 	return self.nodeViews;
 	
+}
+
+- (void)layoutNodeViews
+{
+	NSInteger itemsOffset = (self.pageControlView.currentPage * self.nViewsPerPage);
+	
+	NSInteger nViews = [self.nodeViews count];
+	float nodeViewSize = self.scrollView.frame.size.height;
+	self.nViewsPerPage = (self.scrollView.frame.size.width / nodeViewSize);
+	float nodeViewSeparation = ((self.scrollView.frame.size.width - self.nViewsPerPage * nodeViewSize) / (self.nViewsPerPage+1));
+	
+	CGFloat currX = nodeViewSeparation;
+	for (int i=0; i<nViews; ++i)
+	{
+		TKDNodeView *nodeView = [self.nodeViews objectAtIndex:i];
+		[nodeView setFrame:CGRectMake(currX, 0.0f, nodeViewSize, nodeViewSize)];
+		
+		currX += (nodeViewSize + nodeViewSeparation);
+		if ((i % self.nViewsPerPage) == (self.nViewsPerPage-1))
+		{
+			currX += nodeViewSeparation;
+		}
+	}
+	
+	int nPages = ((nViews / self.nViewsPerPage) + ((nViews % self.nViewsPerPage) == 0 ? 0 : 1));
+	[self.leftMarkView setHidden:YES];
+	[self.leftMarkView setHidden:(nPages <= 1)];
+	[self.pageControlView setNumberOfPages:nPages];
+
+	CGSize pageControlSize = [self.pageControlView sizeForNumberOfPages:nPages];
+	pageControlSize.height = 16.0f;
+	pageControlSize.width += 14.0f;
+	UIViewAutoresizing pageControlAutoresizing = self.pageControlView.autoresizingMask;
+	[self.pageControlView setAutoresizingMask:(UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin)];
+	[self.pageControlView setFrame:CGRectMake((self.frame.size.width-pageControlSize.width)*0.5f, self.pageControlView.frame.origin.y, pageControlSize.width, pageControlSize.height)];
+	self.pageControlView.autoresizingMask = pageControlAutoresizing;
+	
+	NSInteger currPage = (itemsOffset / self.nViewsPerPage) + ((itemsOffset % self.nViewsPerPage) == 0 ? 0 : 1);
+	[self.pageControlView setCurrentPage:currPage];
+	[self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*currPage+1.0f, 0.0f)];
 }
 
 - (void)showImages:(BOOL)showImages andNames:(BOOL)showNames

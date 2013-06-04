@@ -8,6 +8,12 @@
 
 #import "TKDView.h"
 
+@interface UIView (TKDView)
+
+- (void)_setBackgroundColor:(UIColor *)backgroundColor recursively:(BOOL)recursive;
+
+@end
+
 @implementation TKDView
 
 - (id)initWithFrame:(CGRect)frame
@@ -64,6 +70,30 @@
 - (void)setup
 {
 	self.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
+}
+
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor recursively:(BOOL)recursive
+{
+	[self _setBackgroundColor:backgroundColor recursively:recursive];
+}
+
+
+@end
+
+
+@implementation UIView (TKDView)
+
+- (void)_setBackgroundColor:(UIColor *)backgroundColor recursively:(BOOL)recursive
+{
+	[self setBackgroundColor:backgroundColor];
+	if (recursive)
+	{
+		for (UIView *view in self.subviews)
+		{
+			[view _setBackgroundColor:backgroundColor recursively:YES];
+		}
+	}
 }
 
 @end

@@ -19,4 +19,6 @@
 + (id)viewWithOwner:(id)owner;
 - (void)setup;
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor recursively:(BOOL)recursive;
+
 @end

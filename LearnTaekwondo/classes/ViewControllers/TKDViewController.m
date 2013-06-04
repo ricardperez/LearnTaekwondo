@@ -40,4 +40,10 @@
 	return [[[UINavigationController alloc] initWithRootViewController:vc] autorelease];
 }
 
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+
 @end

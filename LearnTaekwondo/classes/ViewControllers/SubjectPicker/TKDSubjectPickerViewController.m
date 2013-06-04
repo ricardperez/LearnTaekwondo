@@ -19,9 +19,11 @@
 
 @property (nonatomic, retain) NSArray *groupedSubjects;
 @property (nonatomic, assign) NSInteger nSelectedSubjects;
+@property (nonatomic, assign) UIInterfaceOrientation usedOrientation;
 
-
+- (void)setupSubjectInstances;
 - (NSInteger)nItemsPerRow;
+- (CGFloat)rowsHeight;
 
 @end
 
@@ -40,43 +42,9 @@
 {
     [super viewDidLoad];
 	
-	[self setupSubjectInstances];
-	[self.tableView reloadData];
-	
 	[self.navigationItem setTitle:@"Kibon kisul"];
 	[self.nextButton setTitle:NSLocalizedString(@"Siguiente", nil) forState:UIControlStateNormal];
 	[[TKDViewStyles sharedInstance] styleButton:self.nextButton];
-	self.nSelectedSubjects = 0;
-}
-
-- (void)setupSubjectInstances
-{
-	if (self.subjectPickedModels == nil)
-	{
-		NSArray *subjects = [[TKDSubjectFactory sharedInstance] subjectsInPlist:@"kibon_kisul"];
-		NSMutableArray *subjectsPicked = [NSMutableArray arrayWithCapacity:[subjects count]];
-		for (TKDSubject *subject in subjects)
-		{
-			TKDSubjectPicked *subjectPicked = [[[TKDSubjectPicked alloc] initWithSubject:subject] autorelease];
-			[subjectsPicked addObject:subjectPicked];
-		}
-		self.subjectPickedModels = subjectsPicked;
-	}
-	
-	NSInteger nItemsPerRow = [self nItemsPerRow];
-	NSMutableArray *groupedSubjects = [NSMutableArray arrayWithCapacity:5];
-	NSInteger firstIndex = 0;
-	NSInteger length = MIN(nItemsPerRow, [self.subjectPickedModels count]);
-	while (length > 0)
-	{
-		NSArray *subrange = [self.subjectPickedModels subarrayWithRange:NSMakeRange(firstIndex, length)];
-		[groupedSubjects addObject:subrange];
-		
-		firstIndex += length;
-		length = MIN(nItemsPerRow, ([self.subjectPickedModels count]-firstIndex));
-	}
-	self.groupedSubjects = groupedSubjects;
-	
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -86,6 +54,9 @@
 	{
 		[subjectPicked setPicked:NO];
 	}
+	
+	self.usedOrientation = [self interfaceOrientation];
+	[self setupSubjectInstances];
 	[self.tableView reloadData];
 	[self setNSelectedSubjects:0];
 }
@@ -183,15 +154,62 @@
 	[self.nextButton setEnabled:(nSelectedSubjects > 0)];
 }
 
+- (void)setupSubjectInstances
+{
+	if (self.subjectPickedModels == nil)
+	{
+		NSArray *subjects = [[TKDSubjectFactory sharedInstance] subjectsInPlist:@"kibon_kisul"];
+		NSMutableArray *subjectsPicked = [NSMutableArray arrayWithCapacity:[subjects count]];
+		for (TKDSubject *subject in subjects)
+		{
+			TKDSubjectPicked *subjectPicked = [[[TKDSubjectPicked alloc] initWithSubject:subject] autorelease];
+			[subjectsPicked addObject:subjectPicked];
+		}
+		self.subjectPickedModels = subjectsPicked;
+	}
+	
+	NSInteger nItemsPerRow = [self nItemsPerRow];
+	NSMutableArray *groupedSubjects = [NSMutableArray arrayWithCapacity:5];
+	NSInteger firstIndex = 0;
+	NSInteger length = MIN(nItemsPerRow, [self.subjectPickedModels count]);
+	while (length > 0)
+	{
+		NSArray *subrange = [self.subjectPickedModels subarrayWithRange:NSMakeRange(firstIndex, length)];
+		[groupedSubjects addObject:subrange];
+		
+		firstIndex += length;
+		length = MIN(nItemsPerRow, ([self.subjectPickedModels count]-firstIndex));
+	}
+	self.groupedSubjects = groupedSubjects;
+	
+}
 
 - (NSInteger)nItemsPerRow
 {
-	return (IS_IPAD() ? 3 : 2);
+	if (IS_IPAD())
+	{
+		return 3;
+	} else
+	{
+		return (UIInterfaceOrientationIsPortrait(self.usedOrientation) ? 2 : 3);
+	}
 }
 
 - (CGFloat)rowsHeight
 {
-	return (IS_IPAD() ? 200.0f : (IS_IPHONE_4_INCH() ? 138.0f : 122.0f));
+	if (IS_IPAD())
+	{
+		return 200.0f;
+	} else
+	{
+		if (UIInterfaceOrientationIsPortrait(self.usedOrientation))
+		{
+			return (IS_IPHONE_4_INCH() ? 138.0f : 122.0f);
+		} else
+		{
+			return 110.0f;
+		}
+	}
 }
 
 
@@ -227,6 +245,21 @@
 		[self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
 		[self.tableView endUpdates];
 	}
+	[self.tableView reloadData];
+}
+
+
+#pragma mark - Rotations
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	[NSTimer scheduledTimerWithTimeInterval:duration/2.0 target:self selector:@selector(scheduledLayoutForRotation:) userInfo:[NSNumber numberWithInteger:toInterfaceOrientation] repeats:NO];
+}
+
+- (void)scheduledLayoutForRotation:(NSTimer *)timer
+{
+	self.usedOrientation = [timer.userInfo integerValue];
+	[self setupSubjectInstances];
 	[self.tableView reloadData];
 }
 

@@ -22,9 +22,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    // Override point for customization after application launch.
-	
-	self.navigationController = [[[UINavigationController alloc] initWithRootViewController:[TKDSubjectPickerViewController viewController]] autorelease];
+    
+	/*
+	 Instantiation of the navigation controller using a 
+	 TKDSubjectPickerViewController instance as its root controller.
+	 */
+	self.navigationController = [TKDSubjectPickerViewController navigationControllerWithViewController:nil];
 	self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
     return YES;

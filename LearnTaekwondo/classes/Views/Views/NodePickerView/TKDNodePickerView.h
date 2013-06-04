@@ -29,6 +29,7 @@
 @property (nonatomic, assign) id<TKDNodePickerViewDelegate> delegate;
 
 - (NSArray *)createNodeViews:(NSInteger)nViews;
+- (void)layoutNodeViews;
 - (void)setPanGestureRecognizerEnabled:(BOOL)enabled;
 - (void)showImages:(BOOL)showImages andNames:(BOOL)showNames;
 

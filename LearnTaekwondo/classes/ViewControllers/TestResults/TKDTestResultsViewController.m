@@ -18,6 +18,11 @@
 
 @property (nonatomic, retain) NSArray *loadedResults;
 @property (nonatomic, retain) NSArray *groupedResults;
+@property (nonatomic, assign) UIInterfaceOrientation usedOrientation;
+
+- (void)setupResultInstances;
+- (NSInteger)nItemsPerRow;
+- (CGFloat)rowsHeight;
 
 @end
 
@@ -55,30 +60,13 @@
 - (void)loadResults:(NSArray *)results
 {
 	self.loadedResults = results;
-	
-	if (self.tableView != nil)
-	{
-		CGFloat rowsHeight = [self rowsHeight];
-		NSInteger nElementsPerRow = (self.tableView.frame.size.width / rowsHeight);
-		
-		NSMutableArray *groupedResults = [NSMutableArray arrayWithCapacity:5];
-		NSInteger firstIndex = 0;
-		NSInteger length = MIN(nElementsPerRow, [results count]);
-		while (length > 0)
-		{
-			NSArray *subrange = [results subarrayWithRange:NSMakeRange(firstIndex, length)];
-			[groupedResults addObject:subrange];
-			
-			firstIndex += length;
-			length = MIN(nElementsPerRow, ([results count]-firstIndex));
-		}
-		self.groupedResults = groupedResults;
-	}
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	self.usedOrientation = [self interfaceOrientation];
+	[self setupResultInstances];
 	[self.tableView reloadData];
 }
 
@@ -86,11 +74,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (CGFloat)rowsHeight
-{
-	return (IS_IPAD() ? 150.0f : 104.0f);
 }
 
 
@@ -126,6 +109,8 @@
 
 - (void)loadModels:(NSArray *)models toCellView:(TKDTestResultsCellView *)cellView
 {
+	cellView.backgroundColor = [UIColor clearColor];
+	cellView.contentView.backgroundColor = [UIColor clearColor];
 	TKDTestResultsRowView *rowView = (TKDTestResultsRowView *)cellView.rowView;
 	NSArray *views = [rowView showItemViews:[models count] inWidth:self.tableView.frame.size.width andHeight:[self rowsHeight]];
 	for (NSInteger i=0; i<[models count]; ++i)
@@ -139,12 +124,63 @@
 		[nodeView showImage:YES andName:YES hasToFillName:NO];
 		[resultView setNErrors:[resultNode failures]];
 	}
+	
+	[rowView setBackgroundColor:[UIColor clearColor] recursively:YES];
+}
+
+
+- (void)setupResultInstances
+{
+	NSInteger nElementsPerRow = [self nItemsPerRow];
+	
+	NSMutableArray *groupedResults = [NSMutableArray arrayWithCapacity:5];
+	NSInteger firstIndex = 0;
+	NSInteger length = MIN(nElementsPerRow, [self.loadedResults count]);
+	while (length > 0)
+	{
+		NSArray *subrange = [self.loadedResults subarrayWithRange:NSMakeRange(firstIndex, length)];
+		[groupedResults addObject:subrange];
+		
+		firstIndex += length;
+		length = MIN(nElementsPerRow, ([self.loadedResults count]-firstIndex));
+	}
+	self.groupedResults = groupedResults;
+}
+
+- (NSInteger)nItemsPerRow
+{
+	if (IS_IPAD())
+	{
+		return (UIInterfaceOrientationIsPortrait(self.usedOrientation) ? 5 : 8);
+	} else
+	{
+		return (UIInterfaceOrientationIsPortrait(self.usedOrientation) ? 3 : 5);
+	}
+}
+
+- (CGFloat)rowsHeight
+{
+	return (IS_IPAD() ? 150.0f : 104.0f);
 }
 
 
 - (IBAction)exitAction:(id)sender
 {
 	[self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Rotations
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	[NSTimer scheduledTimerWithTimeInterval:duration/2.0 target:self selector:@selector(scheduledLayoutForRotation:) userInfo:[NSNumber numberWithInteger:toInterfaceOrientation] repeats:NO];
+}
+
+- (void)scheduledLayoutForRotation:(NSTimer *)timer
+{
+	self.usedOrientation = [timer.userInfo integerValue];
+	[self setupResultInstances];
+	[self.tableView reloadData];
 }
 
 @end
